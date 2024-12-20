@@ -1,45 +1,139 @@
+
 <!doctype html>
-<html lang="en">
+<html lang="en" style="background-image: url(/images/the-correct-background.webp); background-repeat: no-repeat; background-attachment: fixed;">
   <head>
       <meta charset="utf-8">
       <meta name="description" content="alphasec">
       <meta name="author" content="alphasec">
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
       <title>Sophon Nodes List</title>
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>      
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" crossorigin="anonymous">
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <link rel="stylesheet" href="/css/styles.css">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:500&display=swap">
       <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <script>
+	  <script src="https://kit.fontawesome.com/8c56dbbf46.js" crossorigin="anonymous"></script>
+    
+	<script>
         $(document).ready(function () {
             const apiUrl = "https://monitor.sophon.xyz/nodes";
+            let nodesData = []; // Armazena os dados originais para filtros/ordenação
+			let bordersColors = ["border-primary", "border-secondary", "border border-success", "border border-danger", "border border-warning", "border border-info"]
+			let featuredNodes = ["0x70466ecfd01a279766646ce9babf04d933cb087f"]
+
+            // Função para exibir os nós
+            function renderNodes(data) {
+                let nodesContainer = $("#nodes-container");
+				let featuredNodesContainer = $("#nodes-featured");
+                nodesContainer.empty();
+				featuredNodesContainer.empty();
+				let icounter = 0;
+
+                if (data.length > 0) {
+                    data.forEach(node => {
+                        let truncatedUptime = parseFloat(node.uptime).toFixed(2); // Trunca para 2 casas decimais
+						let truncatedRewards = parseFloat(node.rewards).toFixed(2); // Trunca para 2 casas decimais
+						let borderColor = bordersColors[Math.floor(Math.random() * (bordersColors.length))]
+						if(node.operator == featuredNodes[0]){
+							featuredNodesContainer.append(
+                            `<a href="javascript:void(0);" class="col-md-4 mb-4" style="text-decoration:none" onclick="copyOperator('op-${icounter}');">
+									
+										<div class="card h-100 ${borderColor} rounded" style="background-image: url(/images/pngegg.png); background-size: inherit; background-repeat: no-repeat; background-color: beige;">
+											<div class="card-body">
+												<div class="d-flex justify-content-between">	
+													<div class="p-2 small">${node.status ? "🟢" : "🔴"}</div>												
+													<div class="p-2"><i class="fa-solid fa-copy"></i></div>
+												</div>
+												<div class="mt-4"></div>
+												<div class="d-flex justify-content-center" style=""text-wrap: wrap;">
+													
+													<p class="card-text small">${node.operator}</p>
+													
+												</div>
+												<div class="mt-4"></div>
+												<div class="d-flex justify-content-center">
+													
+													<div class="p-2 small">💲${node.fee}%</div>
+													<div class="p-2 small">🕑${truncatedUptime}%</div>
+													<div class="p-2 small">💎${truncatedRewards} SOPHON</div>
+												</div>
+												
+											</div>
+										</div>
+									
+								</a><input type="text" value="${node.operator}" id="op-${icounter}" style="display: none;"/>`
+							);
+						}else{
+							nodesContainer.append(
+                            `<a href="javascript:void(0);" class="col-md-4 mb-4" style="text-decoration:none" onclick="copyOperator('op-${icounter}');">
+									
+										<div class="card h-100 ${borderColor} rounded">
+											<div class="card-body">
+												<div class="d-flex justify-content-between">	
+													<div class="p-2 small">${node.status ? "🟢" : "🔴"}</div>												
+													<div class="p-2"><i class="fa-solid fa-copy"></i></div>
+												</div>
+												<div class="mt-4"></div>
+												<div class="d-flex justify-content-center" style=""text-wrap: wrap;">
+													
+													<p class="card-text small">${node.operator}</p>
+													
+												</div>
+												<div class="mt-4"></div>
+												<div class="d-flex justify-content-center">
+													
+													<div class="p-2 small">💲${node.fee}%</div>
+													<div class="p-2 small">🕑${truncatedUptime}%</div>
+													<div class="p-2 small">💎${truncatedRewards} SOPHON</div>
+												</div>
+												
+											</div>
+										</div>
+									
+								</a><input type="text" value="${node.operator}" id="op-${icounter}" style="display: none;"/>`
+							);
+						}
+						icounter++;
+                    });
+                } else {
+                    nodesContainer.html('<p class="text-center">Nenhum nó encontrado.</p>');
+                }
+            }
+
+            // Função para aplicar filtro e ordenação
+            function applyFiltersAndSort() {
+                let filteredData = [...nodesData];
+
+                // Aplicando filtro
+                const statusFilter = $("#filterStatus").val();
+                if (statusFilter !== "all") {
+                    filteredData = filteredData.filter(node => node.status.toString() === statusFilter);
+                }
+
+                // Aplicando ordenação
+                const sortCriteria = $("#sortCriteria").val();
+                const sortOrder = $("#sortOrder").val();
+                filteredData.sort((a, b) => {
+                    let valueA = parseFloat(a[sortCriteria]);
+                    let valueB = parseFloat(b[sortCriteria]);
+
+                    if (sortOrder === "asc") {
+                        return valueA - valueB;
+                    } else {
+                        return valueB - valueA;
+                    }
+                });
+
+                renderNodes(filteredData);
+            }
 
             // Fazendo a requisição GET
             $.get(apiUrl)
                 .done(function (data) {
                     console.log("Dados recebidos da API:", data);
-
-                    // Verifica se existem nodes na resposta
                     if (data.nodes && data.nodes.length > 0) {
-                        let nodesContainer = $("#nodes-container");
-                        nodesContainer.empty();
-
-                        // Itera sobre os nodes e adiciona cards ao contêiner
-                        data.nodes.forEach(node => {
-                            nodesContainer.append(
-                                `<div class="col-md-4 mb-4">
-                                    <div class="card h-100">
-                                        <div class="card-body">
-                                            <h5 class="card-title">Operator</h5>
-                                            <p class="card-text"><strong>ID:</strong> ${node.operator}</p>
-                                            <p class="card-text"><strong>Status:</strong> ${node.status ? "Ativo" : "Inativo"}</p>
-                                            <p class="card-text"><strong>Rewards:</strong> ${node.rewards}</p>
-                                            <p class="card-text"><strong>Fee:</strong> ${node.fee}%</p>
-                                            <p class="card-text"><strong>Uptime:</strong> ${node.uptime}%</p>
-                                        </div>
-                                    </div>
-                                </div>`
-                            );
-                        });
+                        nodesData = data.nodes; // Armazena os dados originais
+                        renderNodes(nodesData); // Renderiza os nós inicialmente
                     } else {
                         $("#nodes-container").html('<p class="text-center">Nenhum nó encontrado.</p>');
                     }
@@ -48,18 +142,102 @@
                     console.error("Erro ao consumir a API:", error);
                     $("#nodes-container").html('<p class="text-center text-danger">Erro ao carregar os dados.</p>');
                 });
+
+            // Eventos de mudança nos filtros e ordenação
+            $("#filterStatus, #sortCriteria, #sortOrder").on("change", applyFiltersAndSort);
         });
+		
+		function copyOperator(operator) {
+			  // Get the text field
+			  var copyText = document.getElementById(operator);
+
+			  // Select the text field
+			  copyText.select();
+			  copyText.setSelectionRange(0, 99999); // For mobile devices
+
+			   // Copy the text inside the text field
+			  navigator.clipboard.writeText(copyText.value);
+
+			  // Alert the copied text
+			  //alert("Copied the text: " + copyText.value);
+			  
+			  $('#mymodal').modal('toggle');
+		}
     </script>
   </head>
   <body>
     <div class="container mt-5">
+
         <h1 class="text-center mb-4">Sophon Nodes List</h1>
+		
+		<h2 class="text-center mb-4">Featured Nodes</h2>
+		<div id="nodes-featured" class="row">
+			<div class="col-md-12">
+				<div class="d-flex justify-content-center">
+					<div class="p-2">
+						<img src="/images/Bean-Eater@1x-1.0s-200px-200px.svg" height="150px" />
+					</div>
+				</div>	
+			</div>			
+        </div>
+		
+		<h2 class="text-center mb-4">All Nodes</h2>
+		<!-- Filtros e Ordenação -->
+        <div class="d-flex justify-content-center">
+            <div class="p-2">
+                <label for="filterStatus" class="form-label">Filter by Status</label>
+                <select id="filterStatus" class="form-select">
+                    <option value="all">All</option>
+                    <option value="true">Online</option>
+                    <option value="false">Offline</option>
+                </select>
+            </div>
+            <div class="p-2">
+                <label for="sortCriteria" class="form-label">Sort by</label>
+                <select id="sortCriteria" class="form-select">
+                    <option value="uptime">Uptime</option>
+                    <option value="rewards">Rewards</option>
+                    <option value="fee">Fee</option>
+                </select>
+            </div>
+            <div class="p-2">
+                <label for="sortOrder" class="form-label">Order</label>
+                <select id="sortOrder" class="form-select">
+                    <option value="asc">Crescente</option>
+                    <option value="desc">Decrescente</option>
+                </select>
+            </div>
+        </div>
+		
         <div id="nodes-container" class="row">
             <!-- Lista de nós será exibida aqui -->
+			<div class="col-md-12">
+				<div class="d-flex justify-content-center">
+					<div class="p-2">
+						<img src="/images/Bean-Eater@1x-1.0s-200px-200px.svg" height="150px" />
+					</div>
+				</div>	
+			</div>	
         </div>
     </div>
-    <div class="row">
+	<div class="container mt-5">
+    <div class="col-md-12 mb-12" style="text-align: center;">
       <span class="text-muted small"><a href="https://twitter.com/chibataflix">Parallax</a> © 2024. All rights reserved.</span>
     </div>
+	</div>
+	
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	
+	<!-- Modal -->
+<div class="modal fade" id="mymodal" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog" role="document">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+	  <strong><i class="fa-solid fa-check"></i> Operator copied!</strong>
+	  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+		<span aria-hidden="true">&times;</span>
+	  </button>
+	</div>
+  </div>
+</div>
   </body>
 </html>
