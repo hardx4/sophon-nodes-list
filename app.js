@@ -17,5 +17,5 @@ app.use((req, res, next) => {
   });
 
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}/`);
+  console.log(`HI Server running at http://localhost:${PORT}/`);
 });
