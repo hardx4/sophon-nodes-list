@@ -27,6 +27,8 @@
 			let bordersColors = ["border-primary", "border-secondary", "border border-success", "border border-danger", "border border-warning", "border border-info"]
 			let featuredNodes = ["0x70466ecfd01a279766646ce9babf04d933cb087f"]
 
+		
+
             // Função para exibir os nós
             function renderNodes(data) {
                 let nodesContainer = $("#nodes-container");
@@ -139,14 +141,15 @@
                     console.log("Dados recebidos da API:", data);
                     if (data.nodes && data.nodes.length > 0) {
                         nodesData = data.nodes; // Armazena os dados originais
-                        renderNodes(nodesData); // Renderiza os nós inicialmente
+			applyFiltersAndSort();
+                        //renderNodes(nodesData); // Renderiza os nós inicialmente
                     } else {
-                        $("#nodes-container").html('<p class="text-center">Nenhum nó encontrado.</p>');
+                        $("#nodes-container").html('<p class="text-center">No nodes found.</p>');
                     }
                 })
                 .fail(function (error) {
                     console.error("Erro ao consumir a API:", error);
-                    $("#nodes-container").html('<p class="text-center text-danger">Erro ao carregar os dados.</p>');
+                    $("#nodes-container").html('<p class="text-center text-danger">Error loading data.</p>');
                 });
 
             // Eventos de mudança nos filtros e ordenação
