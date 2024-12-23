@@ -51,7 +51,7 @@
                         let truncatedUptime = parseFloat(node.uptime).toFixed(2); 
 						let truncatedRewards = parseFloat(node.rewards).toFixed(2); 
 						let borderColor = bordersColors[Math.floor(Math.random() * (bordersColors.length))]
-						if(node.operator == featuredNodes[0]){
+						if(featuredNodes.indexOf(node.operator) !== -1){
 							featuredNodesContainer.append(
                             `<a href="javascript:void(0);" class="col-md-4 mb-4" style="text-decoration:none" onclick="copyOperator('op-${icounter}');">
 									
