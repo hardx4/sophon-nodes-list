@@ -28,7 +28,7 @@
     
 	<script>
         $(document).ready(function () {
-            const apiUrl = "https://monitor.sophon.xyz/nodes";
+            const apiUrl = "https://api.sophon-nodes.xyz/operators";
             let nodesData = []; 
 			let bordersColors = ["border-primary", "border-secondary", "border border-success", "border border-danger", "border border-warning", "border border-info"]
 			let featuredNodes = ["0x70466ecfd01a279766646ce9babf04d933cb087f","0x70fc0ba542b962dd137506f689c2ead82e90d272"]
@@ -48,37 +48,45 @@
 
                 if (data.length > 0) {
                     data.forEach(node => {
-                        let truncatedUptime = parseFloat(node.uptime).toFixed(2); 
-						let truncatedRewards = parseFloat(node.rewards).toFixed(2); 
-						let borderColor = bordersColors[Math.floor(Math.random() * (bordersColors.length))]
-						if(featuredNodes.indexOf(node.operator) !== -1){
+                        let truncatedUptime = parseFloat(node.nodeUptime).toFixed(2); 
+						let truncatedRewards = parseFloat(node.nodeRewards).toFixed(2); 
+						let borderColor = bordersColors[Math.floor(Math.random() * (bordersColors.length))];
+						let upTimeColor = "badge-success";
+						
+						if(truncatedUptime <= 90){
+							upTimeColor = "badge-warning";
+						}else if(truncatedUptime <= 50){
+							upTimeColor = "badge-danger";
+						}
+						
+						if(featuredNodes.indexOf(node.operatorAddress) !== -1){
 							featuredNodesContainer.append(
                             `<a href="javascript:void(0);" class="col-md-4 mb-4" style="text-decoration:none" onclick="copyOperator('op-${icounter}');">
 									
 										<div class="card h-100 ${borderColor} rounded" style="background-image: url(/images/pngegg.png); background-size: inherit; background-repeat: no-repeat; background-color: beige;">
 											<div class="card-body">
 												<div class="d-flex justify-content-between">	
-													<div class="p-2 small">${node.status ? "🟢" : "🔴"}</div>												
+													<div class="p-2 small">${node.nodeStatus ? "🟢" : "🔴"}</div>												
 													<div class="p-2"><i class="fa-solid fa-copy"></i></div>
 												</div>
 												<div class="mt-4"></div>
 												<div class="d-flex justify-content-center" style=""text-wrap: wrap;">
 													
-													<p class="card-text small">${node.operator}</p>
+													<p class="card-text"><span class="badge badge-pill badge-success">${node.operatorAddress}</span></p>
 													
 												</div>
 												<div class="mt-4"></div>
 												<div class="d-flex justify-content-center">
 													
-													<div class="p-2 small">💲${node.fee}%</div>
-													<div class="p-2 small">🕑${truncatedUptime}%</div>
-													<div class="p-2 small">💎${truncatedRewards} SOPHON</div>
+													<div class="p-2"><span class="badge badge-pill badge-secondary">💲${node.nodeFee}%</span></div>
+													<div class="p-2"><span class="badge badge-pill ${upTimeColor}">🕑${truncatedUptime}%</span></div>
+													<div class="p-2"><span class="badge badge-pill badge-info">🧑‍🚀${node.nodesDelegated} Delegations</span></div>
 												</div>
 												
 											</div>
 										</div>
 									
-								</a><input type="text" value="${node.operator}" id="op-${icounter}" style="display: none;"/>`
+								</a><input type="text" value="${node.operatorAddress}" id="op-${icounter}" style="display: none;"/>`
 							);
 							if(node.status == true){
 								nodesOnline++
@@ -90,29 +98,29 @@
 										<div class="card h-100 ${borderColor} rounded">
 											<div class="card-body">
 												<div class="d-flex justify-content-between">	
-													<div class="p-2 small">${node.status ? "🟢" : "🔴"}</div>												
+													<div class="p-2 small">${node.nodeStatus ? "🟢" : "🔴"}</div>												
 													<div class="p-2"><i class="fa-solid fa-copy"></i></div>
 												</div>
 												<div class="mt-4"></div>
 												<div class="d-flex justify-content-center" style=""text-wrap: wrap;">
 													
-													<p class="card-text small">${node.operator}</p>
+													<p class="card-text"><span class="badge badge-pill badge-success">${node.operatorAddress}</span></p>
 													
 												</div>
 												<div class="mt-4"></div>
 												<div class="d-flex justify-content-center">
 													
-													<div class="p-2 small">💲${node.fee}%</div>
-													<div class="p-2 small">🕑${truncatedUptime}%</div>
-													<div class="p-2 small">💎${truncatedRewards} SOPHON</div>
+													<div class="p-2"><span class="badge badge-pill badge-secondary">💲${node.nodeFee}%</span></div>
+													<div class="p-2"><span class="badge badge-pill ${upTimeColor}">🕑${truncatedUptime}%</span></div>
+													<div class="p-2"><span class="badge badge-pill badge-info">🧑‍🚀${node.nodesDelegated} Delegations</span></div>
 												</div>
 												
 											</div>
 										</div>
 									
-								</a><input type="text" value="${node.operator}" id="op-${icounter}" style="display: none;"/>`
+								</a><input type="text" value="${node.operatorAddress}" id="op-${icounter}" style="display: none;"/>`
 							);
-							if(node.status == true){
+							if(node.nodeStatus == true){
 								nodesOnline++
 							}
 							nodesBasicStatus.empty();
@@ -134,7 +142,7 @@
                 // Aplicando filtro
                 const statusFilter = $("#filterStatus").val();
                 if (statusFilter !== "all") {
-                    filteredData = filteredData.filter(node => node.status.toString() === statusFilter);
+                    filteredData = filteredData.filter(node => node.nodeStatus.toString() === statusFilter);
                 }
 
                 // Aplicando ordenação
@@ -241,9 +249,9 @@
             <div class="p-2">
                 <label for="sortCriteria" class="form-label small">Sort by</label>
                 <select id="sortCriteria" class="form-select small">
-                    <option value="uptime">Uptime</option>
-                    <option value="rewards">Rewards</option>
-                    <option value="fee">Fee</option>
+                    <option value="nodeUptime">Uptime</option>
+                    <option value="nodesDelegated">Delegations</option>
+                    <option value="nodeFee">Fee</option>
                 </select>
             </div>
             <div class="p-2">
