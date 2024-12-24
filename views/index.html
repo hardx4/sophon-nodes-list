@@ -28,7 +28,7 @@
     
 	<script>
         $(document).ready(function () {
-            const apiUrl = "https://api.sophon-nodes.xyz/operators";
+            const apiUrl = "https://api.https://sophon-nodes.xyz/operators";
             let nodesData = []; 
 			let bordersColors = ["border-primary", "border-secondary", "border border-success", "border border-danger", "border border-warning", "border border-info"]
 			let featuredNodes = ["0x70466ecfd01a279766646ce9babf04d933cb087f","0x70fc0ba542b962dd137506f689c2ead82e90d272"]
@@ -144,6 +144,14 @@
                 if (statusFilter !== "all") {
                     filteredData = filteredData.filter(node => node.nodeStatus.toString() === statusFilter);
                 }
+				
+				// Address Filter
+				const searchAddress = $("#searchAddress").val().toLowerCase();
+				if (searchAddress) {
+					filteredData = filteredData.filter(node =>
+						node.operatorAddress.toLowerCase().includes(searchAddress)
+					);
+				}
 
                 // Aplicando ordenação
                 const sortCriteria = $("#sortCriteria").val();
@@ -180,7 +188,7 @@
                 });
 
             // Eventos de mudança nos filtros e ordenação
-            $("#filterStatus, #sortCriteria, #sortOrder").on("change", applyFiltersAndSort);
+            $("#filterStatus, #sortCriteria, #sortOrder, #searchAddress").on("input change", applyFiltersAndSort);
         });
 		
 		function copyOperator(operator) {
@@ -261,8 +269,16 @@
                     <option value="desc">Bigger</option>
                 </select>
             </div>
-			<div class="p-2" id="basic-count"></div>
+			<div class="p-2" id="basic-count"></div>			
         </div>
+		
+		<div class="row">
+			<div class="col-md-12">			
+				<input type="text" id="searchAddress" class="form-control" placeholder="Filter by address.">
+			</div>
+		</div>
+		
+		<div class="mb-4"></div>
 		
         <div id="nodes-container" class="row">
             <!-- List of nodes show here -->
