@@ -31,7 +31,7 @@
             const apiUrl = "https://api.sophon-nodes.xyz/operators";
             let nodesData = []; 
 			let bordersColors = ["border-primary", "border-secondary", "border border-success", "border border-danger", "border border-warning", "border border-info"]
-			let featuredNodes = ["0x70466ecfd01a279766646ce9babf04d933cb087f","0x70fc0ba542b962dd137506f689c2ead82e90d272"]
+			let featuredNodes = ["0x70466ecfd01a279766646ce9babf04d933cb087f","0x431ff7382b321be407e5372c526284d34c077206"]
 
 		
 
@@ -176,7 +176,7 @@
                     console.log("Dados recebidos da API:", data);
                     if (data.nodes && data.nodes.length > 0) {
                         nodesData = data.nodes; // Armazena os dados originais
-			applyFiltersAndSort();
+						applyFiltersAndSort();
                         //renderNodes(nodesData); // Renderiza os nós inicialmente
                     } else {
                         $("#nodes-container").html('<p class="text-center">No nodes found.</p>');
@@ -265,8 +265,8 @@
             <div class="p-2">
                 <label for="sortOrder" class="form-label small">Order</label>
                 <select id="sortOrder" class="form-select small">
-                    <option value="asc">Minor</option>
-                    <option value="desc">Bigger</option>
+					<option value="desc">Bigger</option>
+                    <option value="asc">Minor</option>                    
                 </select>
             </div>
 			<div class="p-2" id="basic-count"></div>			
