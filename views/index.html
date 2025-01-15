@@ -35,7 +35,8 @@
 				"0x70fc0ba542b962dd137506f689c2ead82e90d272",
 				"0x3af849172d1e12c3d91e70197568b929c42fc1d7",
 				"0x431ff7382b321be407e5372c526284d34c077206",
-				"0x70466ecfd01a279766646ce9babf04d933cb087f"
+				"0x70466ecfd01a279766646ce9babf04d933cb087f",
+				"0x64864b75b4677cf3af633d3c80e5ed7586cd9fff"
 			]
 
 		
@@ -75,9 +76,10 @@
 													<div class="p-2"><i class="fa-solid fa-copy"></i></div>
 												</div>
 												<div class="mt-4"></div>
-												<div class="d-flex justify-content-center" style=""text-wrap: wrap;">
+												<div class="d-flex flex-column justify-content-center" style=""text-wrap: wrap;">
 													
-													<p class="card-text"><span class="badge badge-pill badge-success">${node.operatorAddress}</span></p>
+													<div class="card-text d-flex justify-content-center"><span class="badge badge-pill badge-success">${node.operatorAddress}</span></div>
+													<div class="p-2 d-flex justify-content-center"><span class="badge badge-pill badge-secondary">💎${node.nodeRewards} SOPH</span></div>
 													
 												</div>
 												<div class="mt-4"></div>
@@ -107,9 +109,10 @@
 													<div class="p-2"><i class="fa-solid fa-copy"></i></div>
 												</div>
 												<div class="mt-4"></div>
-												<div class="d-flex justify-content-center" style=""text-wrap: wrap;">
+												<div class="d-flex flex-column justify-content-center" style=""text-wrap: wrap;">
 													
-													<p class="card-text"><span class="badge badge-pill badge-success">${node.operatorAddress}</span></p>
+													<div class="card-text d-flex justify-content-center"><span class="badge badge-pill badge-success">${node.operatorAddress}</span></div>
+													<div class="p-2 d-flex justify-content-center"><span class="badge badge-pill badge-secondary">💎${node.nodeRewards} SOPH</span></div>
 													
 												</div>
 												<div class="mt-4"></div>
@@ -117,6 +120,7 @@
 													
 													<div class="p-2"><span class="badge badge-pill badge-secondary">💲${node.nodeFee}%</span></div>
 													<div class="p-2"><span class="badge badge-pill ${upTimeColor}">🕑${truncatedUptime}%</span></div>
+													
 													<div class="p-2"><span class="badge badge-pill badge-info">🧑‍🚀${node.nodesDelegated} Delegations</span></div>
 												</div>
 												
